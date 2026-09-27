@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わたしのAIオフィス</title>
+<!--
+  ▼ 使い方
+  下の members 配列を、自分の部門長に書き換えるだけ。
+  role=役割 / name=名前 / emoji=見た目 / desk=席の色(任意)。
+  ブラウザでこのファイルを開けば、あなたのAI会社が俯瞰で見えます。
+-->
+<style>
+  :root{
+    --bg:#eef2f8; --floor:#f7f5ef; --wall:#dfe6f0; --ink:#233; --sub:#6a7686;
+    --desk:#ffffff; --line:#e5e9f0; --accent:#2f6df6; --owl:#f3ead8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN","Meiryo",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);padding:28px 16px 60px}
+  .wrap{max-width:1000px;margin:0 auto}
+  h1{font-size:24px;font-weight:800;margin-bottom:4px}
+  .lead{color:var(--sub);font-size:14px;margin-bottom:22px}
+  .office{background:var(--floor);border:2px solid var(--wall);border-radius:22px;
+    padding:26px;position:relative;box-shadow:inset 0 0 0 8px #fff}
+  .zone-label{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.08em;margin:6px 0 12px}
+  .reception{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#eaf1ff,#fff);
+    border:1px solid var(--accent);border-radius:16px;padding:16px 18px;margin-bottom:22px}
+  .reception .av{font-size:34px}
+  .reception .who b{font-size:16px}
+  .reception .who span{display:block;font-size:12.5px;color:var(--sub)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .desk{background:var(--desk);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;
+    text-align:center;box-shadow:0 2px 6px rgba(30,40,70,.05);transition:transform .12s,box-shadow .12s;cursor:default}
+  .desk:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(30,40,70,.12)}
+  .desk .av{font-size:30px;line-height:1}
+  .desk .role{font-size:11px;color:var(--sub);margin-top:8px;font-weight:700}
+  .desk .name{font-size:15px;font-weight:800;margin-top:2px}
+  .desk .bar{height:4px;border-radius:3px;background:var(--accent);margin:10px auto 0;width:34px;opacity:.85}
+  .owl{display:flex;align-items:center;gap:12px;background:var(--owl);border:1px dashed #d8c79c;
+    border-radius:16px;padding:12px 16px;margin-top:22px}
+  .owl .av{font-size:28px}
+  .owl .who b{font-size:14px}
+  .owl .who span{display:block;font-size:12px;color:#8a7a52}
+  .foot{color:var(--sub);font-size:12px;text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>わたしのAIオフィス</h1>
+  <p class="lead">社長のあなたを、秘書室長と部門長たちが支えるオフィス。下のカードは <code>office.html</code> の members を書き換えると変わります。</p>
+
+  <div class="office">
+    <div class="zone-label">受付 / RECEPTION</div>
+    <div class="reception">
+      <div class="av" id="rc-av">🗂️</div>
+      <div class="who"><b id="rc-name">秘書室長</b><span id="rc-role">あなたの窓口。話を聞いて、担当に振る</span></div>
+    </div>
+
+    <div class="zone-label">各部門 / DEPARTMENTS</div>
+    <div class="grid" id="grid"></div>
+
+    <div class="owl">
+      <div class="av">🦉</div>
+      <div class="who"><b>相談役（フクロウ）</b><span>止まり木で、迷ったときに一言だけ返す</span></div>
+    </div>
+  </div>
+
+  <p class="foot">AIオフィス構築キット — このオフィスは、あなたのエージェントに合わせて自由に育ててください。</p>
+</div>
+
+<script>
+  // ▼▼ ここを自分の会社に書き換える ▼▼
+  const reception = { name: "秘書室長", role: "あなたの窓口。話を聞いて、担当に振る", emoji: "🗂️" };
+
+  const members = [
+    { role: "戦略",       name: "タクミ", emoji: "🧭", color: "#2f6df6" },
+    { role: "リサーチ",   name: "リン",   emoji: "🔎", color: "#18a86b" },
+    { role: "エンジニア", name: "コウ",   emoji: "🛠️", color: "#8a5cf6" },
+    { role: "クリエイティブ", name: "ミオ", emoji: "🎨", color: "#e8590c" },
+    { role: "家計",       name: "ユウ",   emoji: "💰", color: "#c99a2e" },
+    { role: "健康",       name: "アオ",   emoji: "🌿", color: "#2fa36b" },
+    { role: "学習",       name: "ナギ",   emoji: "📚", color: "#3b82f6" },
+    { role: "アナリスト", name: "ノア",   emoji: "📊", color: "#0e7490" },
+  ];
+  // ▲▲ ここまで ▲▲
+
+  document.getElementById('rc-av').textContent = reception.emoji;
+  document.getElementById('rc-name').textContent = reception.name;
+  document.getElementById('rc-role').textContent = reception.role;
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = members.map(m => `
+    <div class="desk">
+      <div class="av">${m.emoji}</div>
+      <div class="role">${m.role}</div>
+      <div class="name">${m.name}</div>
+      <div class="bar" style="background:${m.color || 'var(--accent)'}"></div>
+    </div>`).join('');
+</script>
+</body>
+</html>
